@@ -1,14 +1,16 @@
 
 .PHONY: main.pdf
 
-main.pdf: main.ltx
-	pdflatex main.ltx
+all: main.pdf
+
+R_OPTS=--vanilla
+
+main.pdf: main.Rnw
+	R ${R_OPTS} -e "library(knitr);knit('$<')"
+	pdflatex $(basename $@).tex
 
 view: main.pdf
-	evince main.pdf
-
-%.pdf : %.tex
-	pdflatex $<
+	xdg-open main.pdf || explorer main.pdf
 
 clean:
 	rm -f *.pdf
