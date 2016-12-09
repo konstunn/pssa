@@ -1,16 +1,17 @@
 
-.PHONY: main.pdf
-
-all: main.pdf
-
 R_OPTS=--vanilla
 
-main.pdf: main.Rnw
+main.pdf: main.tex main.aux
+	pdflatex $<
+
+main.tex: main.Rnw
 	R ${R_OPTS} -e "library(knitr);knit('$<')"
-	pdflatex $(basename $@).tex
+
+main.aux: main.tex
+	pdflatex $<
 
 view: main.pdf
-	xdg-open main.pdf || explorer main.pdf
+	xdg-open main.pdf || explorer main.pdf &
 
 clean:
 	rm -f *.pdf
@@ -18,3 +19,4 @@ clean:
 	rm -f *.log
 	rm -f *.toc
 	rm -f *.out
+	rm -f main.tex
