@@ -14,6 +14,8 @@
 \usepackage{enumitem}
 \usepackage[textsize=tiny]{todonotes}
 
+\usepackage{hyperref}
+
 
 \setlist[description]{leftmargin=\parindent,labelindent=\parindent}
 
@@ -215,7 +217,6 @@ wilcox.test(wu_a1$water, wu_a2$water)
 		
 			Гипотеза отвергается.
 
-
 			\item о независимости потребления воды от возраста дерева
 
 			Так как гипотеза об однородности средних величин потребления воды для
@@ -237,8 +238,11 @@ wilcox.test(wu_a1$water, wu_a2$water)
 
 \section*{Заключение}
 
-Заключение. 
-
+Данный отчет был подготовлен с использованием \LaTeX{} и knitR. Использование
+knitR позволяет относительно легко и быстро создавать динамические отчеты по
+статистическим исследованиям, анализу и обработке данных с использованием языка 
+R. Исходные тексты отчета можно получить получить на GitHub: 
+\url{https://github.com/konstunn/pssa/2.git} .
 
 \section*{Список источников}
 
