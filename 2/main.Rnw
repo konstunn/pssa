@@ -243,8 +243,19 @@ minday = min(wu$day)
 maxday = max(wu$day)
 days = maxday - minday
 months = round(days / 30)
+months
 factor = cut(wu$day, breaks=months)
+factor
 wulist = split(wu$water, f=factor)
+wulist
+s = 0
+
+for (x in wulist) {
+	s = s + length(x)
+	print(length(x))
+}
+s
+length(wu$day)
 @
 
 	Проверим данные в каждой группе на нормальность. Воспользуемся
