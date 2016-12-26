@@ -124,10 +124,21 @@ R.
 
 \section*{Список источников}
 
-1. Статистический анализ данных, моделирование и исследование вероятностных
+\begin{enumerate}
+
+\item Статистический анализ данных, моделирование и исследование вероятностных
 закономерностей. Компьютерный подход : монография / Б.Ю. Лемешко, С.Б. Лемешко,
 \mbox{С.Н. Постовалов}, Е.В Чимитова. --- Новосибирск : Изд-во НГТУ, 2011. --- 
 888 с. (серия <<\mbox{Монографии НГТУ}>>).
+
+\item R in Action. Data Analysis and Graphics with R. / Robert I. Kabacoff 
+
+\item Data Analysis and Graphics Using R – an Example-Based Approach / John 
+Maindonald, John Braun
+
+\item Dynamic Documents with R and knitr / Yihui Xie
+
+\end{enumerate}
 
 \end{document}
 
