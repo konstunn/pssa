@@ -11,7 +11,7 @@ main.aux: main.tex
 	pdflatex $<
 
 view: main.pdf
-	xdg-open main.pdf || explorer main.pdf &
+	xdg-open main.pdf > /dev/null 2>&1 &
 
 clean:
 	rm -f *.pdf
