@@ -188,11 +188,11 @@ dat <- harris.wateruse
 library(latticeExtra)
 
 useOuterStrips(xyplot(water ~ day|species*age, dat, 
-			as.table=TRUE,
-			group=tree,
-			type=c('p','smooth','c','g'), 
-			main="harris.wateruse 2 species, 2 ages (10 trees each)",
-			auto.key=list(columns=9)))
+	as.table=TRUE,
+	group=tree,
+	type=c('p','smooth','c','g'),
+	main="harris.wateruse 2 species, 2 ages (10 trees each)",
+	auto.key=list(columns=9)))
 @
 
 	Построим регрессионную модель для данной группы наблюдений. Определим ее
