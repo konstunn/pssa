@@ -14,7 +14,7 @@ view: main.pdf
 	xdg-open main.pdf > /dev/null 2>&1 &
 
 clean:
-	rm -f *.pdf
+	rm -f main.pdf
 	rm -f *.aux
 	rm -f *.log
 	rm -f *.toc
