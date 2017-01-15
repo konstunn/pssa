@@ -239,6 +239,10 @@ Maindonald, John Braun
 
 \item Dynamic Documents with R and knitr / Yihui Xie
 
+\item Winter, B. (2013). Linear models and linear mixed effects models in R
+	with linguistic applications. arXiv:1308.5499.
+		[http://arxiv.org/pdf/1308.5499.pdf]
+
 \end{enumerate}
 
 \end{document}
