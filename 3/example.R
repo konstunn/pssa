@@ -5,8 +5,8 @@ dat <- harris.wateruse
 # Compare to Schabenberger & Pierce, fig 7.23
 if(require(latticeExtra)){
 	useOuterStrips(xyplot(water ~ day|species*age,dat, as.table=TRUE,
-						  group=tree, type=c('p','smooth'),
-						  main="harris.wateruse 2 species, 2 ages (10 trees each)"))
+				  group=tree, type=c('p','smooth'),
+				  main="harris.wateruse 2 species, 2 ages (10 trees each)"))
 }
 
 # Note that measurements on day 268 are all below the trend line and
