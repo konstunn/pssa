@@ -116,14 +116,14 @@ vc(m2l)
 ## SAS reports 3.79, asreml reports 0.77, and exp(-1/3.7945) = 0.7683274
 ## Note: normally a quadratic would be included as 'pol(day,2)'
 
-require(asreml)
-d22 <- d22[order(d22$tree, d22$day),]
-m2a <- asreml(water ~ 1 + ti + ti2,
-			  data=d22,
-			  random = ~ tree,
-			  rcov=~tree:exp(day))
+#require(asreml)
+#d22 <- d22[order(d22$tree, d22$day),]
+#m2a <- asreml(water ~ 1 + ti + ti2,
+#			  data=d22,
+#			  random = ~ tree,
+#			  rcov=~tree:exp(day))
 
-vc(m2a)
+#vc(m2a)
 ##         effect component std.error z.ratio constr
 ##  tree!tree.var    0.2656   0.1301      2      pos
 ##     R!variance    0.1541   0.01611     9.6    pos
@@ -159,13 +159,13 @@ vc(m3l)
 
 
 dat <- dat[order(dat$tree,dat$day),]
-m3a <- asreml(water ~ 0 + age:species + age:species:ti + age:species:ti2,
-			  data=dat,
-			  random = ~ age:species:tree + age:species:tree:ti,
-			  rcov = ~ tree:exp(day)
-			  )
+#m3a <- asreml(water ~ 0 + age:species + age:species:ti + age:species:ti2,
+#			  data=dat,
+#			  random = ~ age:species:tree + age:species:tree:ti,
+#			  rcov = ~ tree:exp(day)
+#			  )
 
-vc(m3a) # Note: day.pow = .8091 = exp(-1/4.7217)
+#vc(m3a) # Note: day.pow = .8091 = exp(-1/4.7217)
 ##                       effect component std.error z.ratio constr
 ##     age:species:tree!age.var   0.1549   0.07192      2.2    pos
 ##  age:species:tree:ti!age.var   0.02785  0.01343      2.1    pos
