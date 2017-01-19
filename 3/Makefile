@@ -5,7 +5,9 @@ main.pdf: main.tex main.aux
 	pdflatex $<
 
 main.tex: main.Rnw
-	R ${R_OPTS} -e "library(knitr);knit('$<')"
+	R ${R_OPTS} \
+		-e "library(knitr)" \
+		-e "knit('$<')"
 
 main.aux: main.tex
 	pdflatex $<
