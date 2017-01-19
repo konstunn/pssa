@@ -13,5 +13,5 @@ view: main.pdf
 	xdg-open main.pdf > /dev/null 2>&1 &
 
 clean:
-	latexmk -C main.pdf
+	latexmk -f -C main.pdf
 	rm -f main.tex

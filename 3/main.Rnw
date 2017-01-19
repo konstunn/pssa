@@ -16,6 +16,8 @@
 
 \usepackage{hyperref}
 
+\usepackage{verbatim}
+
 
 \setlist[description]{leftmargin=\parindent,labelindent=\parindent}
 
@@ -145,10 +147,6 @@
 
 \section*{Ход работы}
 
-\begin{itemize}
-
-	\item По данным из лабораторной работы №1 построить регрессионную модель. 
-
 	Импортируем данные.
 
 <<>>=
@@ -156,43 +154,168 @@ library(agridat)
 dat <- harris.wateruse
 @
 
-	Проведем дополнительно предварительный анализ данных. Построим 
-	корреляционные поля зависимостей потребления воды от номера дня наблюдения,
-	разделив наблюдения на четыре группы по 2 вида, 2 возраста. Построим
-	сглаживающую кривую, аппроксимирующую наблюдения для каждого конкретного
-	дерева.
+\subsection*{Предварительный анализ данных}
+
+	Построим временные ряды <<day-water>>, разделив наблюдения на 4 группы по
+		2 вида, 2 возраста. Построим сглаживающую кривую, аппроксимирующую
+		наблюдения для каждого конкретного дерева.
+
+<<cache=TRUE>>=
+library(ggplot2)
+
+ggplot(dat, aes(day, water)) + geom_point(aes(colour=tree)) +
+	facet_grid(age~species) + geom_smooth(aes(colour=tree), se=F)
+@
+
+	Построим временные ряды <<day-water>> для каждого конкретного отдельного
+		дерева. Построим сглаживающие кривые трендов.
 	
-<<>>=
-library(latticeExtra)
+<<cache=TRUE>>=
+library(ggplot2)
 
-useOuterStrips(xyplot(water ~ day|species*age, dat, 
-	as.table=TRUE,
-	group=tree,
-	type=c('p','smooth','c','g'),
-	main="harris.wateruse 2 species, 2 ages (10 trees each)",
-	auto.key=list(columns=9)))
+ggplot(dat, aes(day, water)) + geom_point() + geom_smooth(se=F) +
+	facet_wrap(~tree)
 @
 
-	Построим регрессионную модель для данной группы наблюдений. Определим ее
-	параметры.
+	Построим совмещенные диаграммы размаха <<age-water>>.
 
 <<>>=
-lm <- lm(water ~ ., dat)
-summary(lm)
-par(mfrow=c(2,2))
-plot(lm)
+library(ggplot2)
+
+ggplot(dat, aes(age, water)) + geom_boxplot()
 @
 
-	\item Проверить качество и адекватность построенной регрессионной
+	Построим совмещенные диаграммы размаха <<species-water>>.
+
+<<>>=
+library(ggplot2)
+
+ggplot(dat, aes(species, water)) + geom_boxplot()
+@
+
+\subsection*{Автоматический отбор регрессоров}
+
+В обратную сторону.
+
+<<cache=TRUE>>=
+maxlm <- lm(water ~ . + (.)^2 + (. - day + I(day^2))^2 + I(day^2), dat)
+
+library(MuMIn)
+expand.formula(formula(maxlm))
+
+s <- summary(maxlm)
+s$r.squared
+s$adj.r.squared
+length(which(is.na(coef(maxlm))))
+
+library(nortest)
+ad.test(resid(maxlm))$p.value
+shapiro.test(resid(maxlm))$p.value
+
+minlm <- lm(water ~ 1, dat)
+
+library(MASS)
+swsm <- stepAIC(maxlm, direction='backward', scope=list(upper=maxlm, 
+																												lower=minlm))
+expand.formula(formula(swsm))
+
+s <- summary(swsm)
+s$r.squared
+s$adj.r.squared
+length(which(is.na(coef(swsm))))
+ad.test(resid(swsm))$p.value
+shapiro.test(resid(swsm))$p.value
+@
+
+В обе стороны.
+
+<<cache=TRUE>>=
+swsm <- stepAIC(maxlm, direction='both', scope=list(upper=maxlm, lower=minlm))
+
+expand.formula(formula(swsm))
+
+s <- summary(swsm)
+s$r.squared
+s$adj.r.squared
+length(which(is.na(coef(swsm))))
+ad.test(resid(swsm))$p.value
+shapiro.test(resid(swsm))$p.value
+@
+
+Вперед.
+
+<<>>=
+d <- transform(dat, day2=day*day)
+
+minlm <- lm(water ~ 1, d)
+
+swsm <- MASS::stepAIC(minlm, direction='forward', scope=list(upper=maxlm, 
+																											 lower=minlm))
+s <- summary(swsm)
+
+MuMIn::expand.formula(formula(swsm))
+
+s$r.squared
+s$adj.r.squared
+length(which(is.na(coef(swsm))))
+
+library(nortest)
+ad.test(resid(swsm))$p.value
+shapiro.test(resid(swsm))$p.value
+@
+
+\subsection*{Модель без фактора <<tree>> с нулевым свободным членом}
+
+	Построим модель со следующим набором предикторов с нулевым свободным членом. 
+	Эта одна из возможных линейных моделей с наиболее высоким коэффициентом
+	детерминации и при этом без фактора <<tree>>.
+
+<<>>=
+lmf <- lm(water ~ . - tree + (. - tree - day + I(day^2))^2 + (. - tree)^2 + 0 - 
+					species:age, dat)
+
+s <- summary(lmf)
+@
+
+	Коэффициент детерминации $R^2 = \Sexpr{s$r.squared}$.
+
+	Скорректированный коэффициент детерминации 
+		$\bar{R}^2 = \Sexpr{s$adj.r.squared}$.
+
+	Значение коэффициента детерминации высокое. 
+
+	Сводная информация по модели.
+
+<<>>=
+length(which(is.na(coef(lmf))))
+MuMIn::expand.formula(formula(lmf))
+nortest::ad.test(resid(lmf))$p.value
+shapiro.test(resid(lmf))$p.value
+@
+
+\subsection*{Модель с наиболее <<нормальными>> остатками}
+
+<<>>=
+lmf <- lm(water ~ 0 + day + tree + I(day^2), dat)
+
+s <- summary(lmf)
+
+library(nortest)
+
+ad.test(resid(lmf))$p.value
+
+shapiro.test(resid(lmf))$p.value
+@
+
+	\bigbreak
+	Проверить качество и адекватность построенной регрессионной
 	модели, сделать соответствующие выводы, при необходимости
 	вернуться на этап определения вида модели.
-
-	\item Для наиболее оптимальной построенной модели записать прогностическую
+	\medbreak
+	Для наиболее оптимальной построенной модели записать прогностическую
 	модель, описать в терминах предметной области вид и характер полученных
 	зависимостей, сделать сравнительный анализ степени влияния независимых
 	переменных на отклик, характеристики качества получаемых прогнозов.
-
-\end{itemize}
 
 \section*{Заключение}
 
