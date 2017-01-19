@@ -215,8 +215,9 @@ shapiro.test(resid(maxlm))$p.value
 minlm <- lm(water ~ 1, dat)
 
 library(MASS)
-swsm <- stepAIC(maxlm, direction='backward', scope=list(upper=maxlm, 
-																												lower=minlm))
+swsm <- stepAIC(maxlm, direction='backward', 
+								scope=list(upper=maxlm, lower=minlm))
+
 expand.formula(formula(swsm))
 
 s <- summary(swsm)
@@ -230,7 +231,8 @@ shapiro.test(resid(swsm))$p.value
 В обе стороны.
 
 <<cache=TRUE>>=
-swsm <- stepAIC(maxlm, direction='both', scope=list(upper=maxlm, lower=minlm))
+swsm <- stepAIC(maxlm, direction='both', 
+								scope=list(upper=maxlm, lower=minlm))
 
 expand.formula(formula(swsm))
 
@@ -249,8 +251,9 @@ d <- transform(dat, day2=day*day)
 
 minlm <- lm(water ~ 1, d)
 
-swsm <- MASS::stepAIC(minlm, direction='forward', scope=list(upper=maxlm, 
-																											 lower=minlm))
+swsm <- MASS::stepAIC(minlm, direction='forward', 
+											scope=list(upper=maxlm, lower=minlm))
+
 s <- summary(swsm)
 
 MuMIn::expand.formula(formula(swsm))
@@ -264,7 +267,8 @@ ad.test(resid(swsm))$p.value
 shapiro.test(resid(swsm))$p.value
 @
 
-\subsection*{Модель без фактора <<tree>> с нулевым свободным членом}
+\subsection*{Модель без фактора <<tree>> с нулевым свободным членом и
+большим коэффициентом детерминации}
 
 	Построим модель со следующим набором предикторов с нулевым свободным членом. 
 	Эта одна из возможных линейных моделей с наиболее высоким коэффициентом
@@ -282,7 +286,7 @@ s <- summary(lmf)
 	Скорректированный коэффициент детерминации 
 		$\bar{R}^2 = \Sexpr{s$adj.r.squared}$.
 
-	Значение коэффициента детерминации высокое. 
+	Значение коэффициента детерминации удовлетворительное.
 
 	Сводная информация по модели.
 
@@ -293,7 +297,7 @@ nortest::ad.test(resid(lmf))$p.value
 shapiro.test(resid(lmf))$p.value
 @
 
-\subsection*{Модель с наиболее <<нормальными>> остатками}
+\subsection*{Модель с <<наиболее нормальными>> остатками}
 
 <<>>=
 lmf <- lm(water ~ 0 + day + tree + I(day^2), dat)
