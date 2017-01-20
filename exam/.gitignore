@@ -1,0 +1,4 @@
+cache/*
+*.fls
+*.fdb_latexmk
+main.tex
