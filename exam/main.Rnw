@@ -1,0 +1,180 @@
+
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{cmap}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+\usepackage[a4paper,margin=1cm,footskip=.5cm,left=2cm,right=1.5cm,top=1.5cm
+	,bottom=1.5cm]{geometry}
+\usepackage{textcase}
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage[textsize=tiny]{todonotes}
+
+\usepackage{hyperref}
+
+\usepackage{verbatim}
+
+
+\setlist[description]{leftmargin=\parindent,labelindent=\parindent}
+
+\begin{document}
+
+\begin{titlepage}
+
+	\begin{center}
+		Новосибирский государственный технический университет
+		
+		Факультет прикладной математики и информатики
+		
+		Кафедра теоретической и прикладной информатики
+		
+		\vspace{250pt}
+		
+		\textbf{\LARGE{Экзаменационная работа}}
+		\medbreak
+		\medbreak
+		по дисциплине\\
+		\medbreak
+		<<Программные системы статистического анализа>>
+		\vspace{150pt}
+	\end{center}
+
+	\begin{minipage}[t]{7cm}
+	\flushleft
+		\begin{tabbing}
+			Группа:\qquad\qquad	\= ПММ-61\\
+			Студент:						\> Горбунов К. К.\\
+		\end{tabbing}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{7cm}
+		\flushright
+		Преподаватели:\\
+		Вожов С. С.\\
+		Четвертакова Е. С.\\
+		Чимитова Е. В.\\
+	\end{minipage}
+
+	\begin{center}
+		\vspace{\fill}
+		Новосибирск, 2016 г.
+	\end{center}
+
+\end{titlepage}
+
+\newpage
+
+\section*{Ход работы}
+
+<<>>=
+df = read.csv("./Time.csv")
+head(df)
+
+
+df <- df[order(df$RUN),]
+head(df)
+
+
+class(df$T20BOLT)
+
+library(ggplot2)
+df$T20BOLT <- as.numeric(sub(",", ".", df$T20BOLT, fixed=T))
+ggplot() + geom_point(data=df, aes(RUN, T20BOLT))
+head(df)
+
+
+class(df$SPEED2)
+df$SPEED2 <- as.numeric(sub(",", ".", df$SPEED2, fixed=T))
+ggplot() + geom_point(data=df, aes(SPEED2, T20BOLT))
+#df$SPEED2 <- as.factor(df$SPEED2)
+#ggplot() + geom_boxplot(data=df, aes(SPEED2, T20BOLT))
+
+
+class(df$SPEED1)
+ggplot() + geom_point(data=df, aes(SPEED1, T20BOLT))
+#df$SPEED1 <- as.factor(df$SPEED1)
+#ggplot() + geom_boxplot(data=df, aes(SPEED1, T20BOLT))
+
+
+class(df$TOTAL)
+ggplot() + geom_point(data=df, aes(TOTAL, T20BOLT))
+#df$TOTAL <- as.factor(df$TOTAL)
+#ggplot() + geom_boxplot(data=df, aes(TOTAL, T20BOLT))
+
+
+class(df$NUMBER2)
+ggplot() + geom_point(data=df, aes(NUMBER2, T20BOLT))
+#df$NUMBER2 <- as.factor(df$NUMBER2)
+#ggplot() + geom_boxplot(data=df, aes(NUMBER2, T20BOLT))
+
+
+class(df$SENS)
+ggplot() + geom_point(data=df, aes(SENS, T20BOLT))
+#df$SENS <- as.factor(df$SENS)
+#ggplot() + geom_boxplot(data=df, aes(SENS, T20BOLT))
+@
+
+<<>>=
+attach(df)
+hist(T20BOLT)
+plot(density(T20BOLT))
+nortest::ad.test(T20BOLT)
+shapiro.test(T20BOLT)
+detach(df)
+@
+
+Гипотеза отвергается.
+
+<<>>=
+dfmt20 <- droplevels(subset(df, SPEED2=="2" & SPEED1=="4" & SENS=="8"))
+dfmt20$T20BOLT
+
+dfrest <- droplevels(subset(df, SPEED2!="2" & SPEED1!="4" & SENS!="8"))
+
+library(ggplot2)
+ggplot() + 
+	geom_point(data=dfrest, aes(RUN, T20BOLT), colour="green") + 
+	geom_point(data=dfmt20, aes(RUN, T20BOLT), colour="red")
+
+ggplot() + 
+	geom_point(data=dfrest, aes(RUN, T20BOLT), colour="green") + 
+	geom_point(data=dfmt20, aes(RUN, T20BOLT), colour="red") +
+	facet_grid(SENS~SPEED1~SPEED2, labeller = label_both)
+@
+
+<<>>=
+lmf <- lm(T20BOLT ~ . - RUN - TOTAL - NUMBER2 + I(SPEED1^2) + I(SPEED2^2) + 
+	I(SENS^2), data=df)
+@
+
+<<>>=
+library(MuMIn)
+
+expand.formula(formula(lmf))
+@
+
+<<>>=
+s <- summary(lmf)
+s
+s$r.squared
+s$adj.r.squared
+
+nortest::ad.test(resid(lmf))
+shapiro.test(resid(lmf))
+
+hist(resid(lmf))
+plot(density(resid(lmf)))
+@
+
+<<>>=
+dfp <- df
+dfp$T20BOLT <- predict(lmf)
+@
+
+\end{document}
+
+% vim: ts=2 sw=2

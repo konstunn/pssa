@@ -216,7 +216,7 @@ minlm <- lm(water ~ 1, dat)
 
 library(MASS)
 swsm <- stepAIC(maxlm, direction='backward', 
-								scope=list(upper=maxlm, lower=minlm))
+	scope=list(upper=maxlm, lower=minlm))
 
 expand.formula(formula(swsm))
 
@@ -232,7 +232,7 @@ shapiro.test(resid(swsm))$p.value
 
 <<cache=TRUE>>=
 swsm <- stepAIC(maxlm, direction='both', 
-								scope=list(upper=maxlm, lower=minlm))
+	scope=list(upper=maxlm, lower=minlm))
 
 expand.formula(formula(swsm))
 
@@ -252,7 +252,7 @@ d <- transform(dat, day2=day*day)
 minlm <- lm(water ~ 1, d)
 
 swsm <- MASS::stepAIC(minlm, direction='forward', 
-											scope=list(upper=maxlm, lower=minlm))
+	scope=list(upper=maxlm, lower=minlm))
 
 s <- summary(swsm)
 
